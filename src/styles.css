@@ -155,5 +155,22 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
   }
+
+  .font-mono, code, kbd, pre {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer utilities {
+  .bg-gradient-primary { background: var(--gradient-primary); }
+  .bg-gradient-subtle { background: var(--gradient-subtle); }
+  .shadow-elegant { box-shadow: var(--shadow-elegant); }
+  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .text-chain { color: var(--chain); }
+  .bg-chain { background-color: var(--chain); }
+  .text-success { color: var(--success); }
+  .bg-success { background-color: var(--success); }
 }
