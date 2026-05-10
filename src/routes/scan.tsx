@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BATCHES } from "@/lib/mock-data";
+import { ShopOwnerSocial } from "@/components/ShopOwnerSocial";
 import {
   ShieldCheck,
   MapPin,
@@ -90,6 +91,8 @@ function ScanPage() {
                   <Row Icon={Leaf} label="Cultivation">Sustainable · Rain-fed</Row>
                 </div>
               </div>
+
+              <ShopOwnerSocial />
 
               {/* Journey */}
               <div className="rounded-2xl border bg-card p-4">

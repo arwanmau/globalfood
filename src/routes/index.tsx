@@ -1,8 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { RoleProvider, useRole } from "@/lib/role-context";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useRole } from "@/lib/role-context";
+import { useAuth } from "@/lib/auth-context";
 import { AppHeader } from "@/components/AppHeader";
 import { BatchTable } from "@/components/BatchTable";
 import { EscrowCard } from "@/components/EscrowCard";
+import { AnalyticsChart } from "@/components/AnalyticsChart";
 import { BATCHES, ROLE_LABELS } from "@/lib/mock-data";
 import { Sprout, Truck, Warehouse, Store, Package, Activity, ShieldCheck, TrendingUp } from "lucide-react";
 
@@ -13,37 +16,26 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Track staple food batches across the supply chain with on-chain verification." },
     ],
   }),
-  component: () => (
-    <RoleProvider>
-      <Dashboard />
-    </RoleProvider>
-  ),
+  component: Dashboard,
 });
 
 const ROLE_COPY = {
-  farmer: {
-    Icon: Sprout,
-    title: "Farm Operations",
-    sub: "Register harvests and submit them to the immutable ledger.",
-  },
-  collector: {
-    Icon: Warehouse,
-    title: "Collection Hub",
-    sub: "Inspect, weigh, and aggregate incoming batches from farms.",
-  },
-  distributor: {
-    Icon: Truck,
-    title: "Distribution Control",
-    sub: "Coordinate logistics and trigger smart contract settlements.",
-  },
-  retailer: {
-    Icon: Store,
-    title: "Retail Inventory",
-    sub: "Verify provenance before stocking on shelves.",
-  },
+  farmer: { Icon: Sprout, title: "Farm Operations", sub: "Register harvests and submit them to the immutable ledger." },
+  collector: { Icon: Warehouse, title: "Collection Hub", sub: "Inspect, weigh, and aggregate incoming batches from farms." },
+  distributor: { Icon: Truck, title: "Distribution Control", sub: "Coordinate logistics and trigger smart contract settlements." },
+  retailer: { Icon: Store, title: "Retail Inventory", sub: "Verify provenance before stocking on shelves." },
 } as const;
 
 function Dashboard() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) navigate({ to: "/login" });
+  }, [user, navigate]);
+
+  if (!user) return null;
+
   const { role } = useRole();
   const meta = ROLE_COPY[role];
   const label = ROLE_LABELS[role];
@@ -60,7 +52,6 @@ function Dashboard() {
       <AppHeader />
 
       <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:py-8">
-        {/* Hero header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-glow">
@@ -73,12 +64,13 @@ function Dashboard() {
                   {label.en}{label.local && ` · ${label.local}`}
                 </span>
               </div>
-              <p className="mt-0.5 text-sm text-muted-foreground">{meta.sub}</p>
+              <p className="mt-0.5 text-sm text-muted-foreground">
+                Halo, <span className="font-semibold text-foreground">{user.name}</span> — {meta.sub}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label} className="rounded-xl border bg-card p-4 shadow-sm transition-shadow hover:shadow-elegant">
@@ -95,10 +87,10 @@ function Dashboard() {
           ))}
         </div>
 
-        {/* Distributor escrow */}
         {role === "distributor" && <EscrowCard />}
 
-        {/* Ledger table */}
+        <AnalyticsChart />
+
         <section>
           <div className="mb-3 flex items-end justify-between">
             <div>
