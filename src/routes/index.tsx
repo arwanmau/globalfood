@@ -28,6 +28,7 @@ const ROLE_COPY = {
 
 function Dashboard() {
   const { user } = useAuth();
+  const { role } = useRole();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,7 +37,6 @@ function Dashboard() {
 
   if (!user) return null;
 
-  const { role } = useRole();
   const meta = ROLE_COPY[role];
   const label = ROLE_LABELS[role];
 
